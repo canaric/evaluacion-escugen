@@ -332,4 +332,3 @@ function getRandomQuestions(count = 25) {
     const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 }
-
