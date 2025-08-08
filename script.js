@@ -974,11 +974,26 @@ function downloadCertificate() {
     }, 500); // Give some time for QR code to render
 }
 
-// Función auxiliar para obtener preguntas aleatorias (asumiendo que questions.js la define)
-// function getRandomQuestions(num) { ... }
-// Esta función debe ser proporcionada por questions.js
+// Función auxiliar para obtener preguntas aleatorias
+function getRandomQuestions(num) {
+    if (!questionBank || questionBank.length === 0) {
+        console.error("questionBank no está disponible");
+        return [];
+    }
+    
+    // Crear una copia del array para no modificar el original
+    const shuffled = [...questionBank];
+    
+    // Algoritmo Fisher-Yates para mezclar el array
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    // Retornar el número solicitado de preguntas
+    return shuffled.slice(0, Math.min(num, shuffled.length));
+}
 
 // announceToScreenReader function (from index_mejorado.html, if needed in script.js)
 // function announceToScreenReader(message) { ... }
-
 
