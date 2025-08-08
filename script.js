@@ -423,18 +423,30 @@ function downloadCertificate() {
     const userName = results.userName || "[Nombre del Participante]";
     const userId = results.userId || "[DNI del Participante]";
 
-    // Generar QR Code
-    const qrData = `Certificado: Seminario El lado oculto de la Seguridad de la Información\nParticipante: ${userName}\nDNI: ${userId}\nFecha: ${completionDateText}\nPorcentaje: ${results.percentage}%`;
+    // Generar datos estructurados para QR Code con información verificable
+    const certificateId = `CERT-${Date.now()}-${userId}`;
+    const qrData = JSON.stringify({
+        certificateId: certificateId,
+        participantName: userName,
+        dni: userId,
+        seminar: "Seminario El lado oculto de la Seguridad de la Información",
+        institution: "Instituto Universitario de Gendarmería Nacional Argentina (IUGNA)",
+        date: completionDateText,
+        score: `${results.percentage}%`,
+        status: "APROBADO",
+        issueDate: new Date().toISOString(),
+        verificationUrl: `https://canaric.github.io/evaluacion-escugen/verify?id=${certificateId}`
+    });
     
     const qrCodeContainer = document.createElement("div");
     qrCodeContainer.id = "qrcode";
-    qrCodeContainer.style.width = "128px";
-    qrCodeContainer.style.height = "128px";
+    qrCodeContainer.style.width = "120px";
+    qrCodeContainer.style.height = "120px";
     qrCodeContainer.style.margin = "20px auto";
 
     const qrcode = new QRCodeStyling({
-        width: 128,
-        height: 128,
+        width: 120,
+        height: 120,
         type: "svg",
         data: qrData,
         dotsOptions: {
@@ -467,61 +479,163 @@ function downloadCertificate() {
             <html>
             <head>
                 <meta charset="UTF-8">
-                <title>Certificado de Participación</title>
+                <title>Certificado</title>
                 <style>
-                    @page { size: A4; margin: 0; }
-                    body { margin: 0; padding: 20px; font-family: 'Times New Roman', serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; }
-                    .certificate { width: 100%; max-width: 800px; margin: 0 auto; text-align: center; position: relative; }
-                    .header { margin-bottom: 30px; }
-                    .logo { width: 80px; height: 80px; margin: 0 20px; }
-                    .title { font-size: 28px; font-weight: bold; margin: 20px 0; color: #00ff41; }
-                    .subtitle { font-size: 18px; margin: 10px 0; }
-                    .content { margin: 40px 0; }
-                    .participant-name { font-size: 32px; font-weight: bold; margin: 20px 0; color: #00ff41; text-decoration: underline; }
-                    .text { font-size: 16px; line-height: 1.6; margin: 15px 0; }
-                    .signatures { display: flex; justify-content: space-around; margin-top: 60px; }
-                    .signature-block { text-align: center; }
-                    .signature-line { width: 200px; height: 1px; background: white; margin: 0 auto 10px; }
-                    .signature-name { font-size: 14px; font-weight: bold; margin: 5px 0; }
-                    .signature-title { font-size: 12px; margin: 0; }
-                    .qr-code-container { position: absolute; top: 20px; right: 20px; }
+                    @page { size: A4; margin: 15mm; }
+                    body { 
+                        margin: 0; 
+                        padding: 0; 
+                        font-family: 'Times New Roman', serif; 
+                        background: white; 
+                        color: black; 
+                        line-height: 1.4;
+                    }
+                    .certificate { 
+                        width: 100%; 
+                        max-width: 210mm; 
+                        margin: 0 auto; 
+                        text-align: center; 
+                        position: relative;
+                        min-height: 297mm;
+                        padding: 20mm;
+                        box-sizing: border-box;
+                    }
+                    .header { 
+                        margin-bottom: 40px; 
+                        border-bottom: 2px solid #000;
+                        padding-bottom: 20px;
+                    }
+                    .logo { 
+                        width: 60px; 
+                        height: 60px; 
+                        margin: 0 15px; 
+                        filter: grayscale(100%);
+                    }
+                    .main-title { 
+                        font-size: 36px; 
+                        font-weight: bold; 
+                        margin: 20px 0; 
+                        color: black;
+                        letter-spacing: 3px;
+                        text-decoration: underline;
+                    }
+                    .subtitle { 
+                        font-size: 18px; 
+                        margin: 10px 0; 
+                        font-style: italic;
+                    }
+                    .institution { 
+                        font-size: 14px; 
+                        margin: 5px 0; 
+                        font-weight: bold;
+                    }
+                    .content { 
+                        margin: 60px 0; 
+                        text-align: center;
+                    }
+                    .participant-name { 
+                        font-size: 36px; 
+                        font-weight: bold; 
+                        margin: 30px 0; 
+                        color: black; 
+                        text-decoration: underline;
+                        letter-spacing: 2px;
+                    }
+                    .text { 
+                        font-size: 16px; 
+                        line-height: 1.6; 
+                        margin: 20px 0; 
+                        text-align: justify;
+                        text-align-last: center;
+                    }
+                    .signatures { 
+                        display: flex; 
+                        justify-content: space-between; 
+                        margin-top: 80px;
+                        margin-bottom: 40px;
+                    }
+                    .signature-block { 
+                        text-align: center; 
+                        width: 30%;
+                    }
+                    .signature-line { 
+                        width: 180px; 
+                        height: 1px; 
+                        background: black; 
+                        margin: 0 auto 10px; 
+                    }
+                    .signature-name { 
+                        font-size: 12px; 
+                        font-weight: bold; 
+                        margin: 5px 0; 
+                        line-height: 1.2;
+                    }
+                    .signature-title { 
+                        font-size: 10px; 
+                        margin: 0; 
+                        font-style: italic;
+                    }
+                    .qr-section {
+                        position: absolute;
+                        bottom: 20mm;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        text-align: center;
+                    }
+                    .qr-text {
+                        font-size: 10px;
+                        margin-top: 10px;
+                        color: #666;
+                    }
+                    .certificate-id {
+                        font-size: 10px;
+                        color: #666;
+                        margin-top: 5px;
+                    }
                 </style>
             </head>
             <body>
                 <div class="certificate">
                     <div class="header">
-                        <div style="display: flex; justify-content: center; align-items: center;">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiMwMGZmNDEiLz4KPHN2ZyB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjMWExYTJlIi8+Cjwvc3ZnPgo8L3N2Zz4KPC9zdmc+" class="logo" alt="Gendarmería Logo">
-                            <div>
-                                <h1 class="title">CERTIFICADO DE PARTICIPACIÓN</h1>
+                        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiMwMDAiLz4KPHN2ZyB4PSIxNSIgeT0iMTUiIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPgo8L3N2Zz4=" class="logo" alt="Gendarmería Logo">
+                            <div style="margin: 0 20px;">
+                                <h1 class="main-title">CERTIFICADO</h1>
                                 <p class="subtitle">Seminario "El lado oculto de la Seguridad de la Información"</p>
                             </div>
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiMwMGZmNDEiLz4KPHN2ZyB4PSIxNSIgeT0iMTUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTQuMDkgOC4yNkwyMSA5TDE0LjA5IDE1Ljc0TDEyIDIyTDkuOTEgMTUuNzRMMyA5TDkuOTEgOC4yNkwxMiAyWiIgZmlsbD0iIzFhMWEyZSIvPgo8L3N2Zz4KPC9zdmc+Cjwvc3ZnPg==" class="logo" alt="IUGNA Logo">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiMwMDAiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDJMMTQuMDkgOC4yNkwyMSA5TDE0LjA5IDE1Ljc0TDEyIDIyTDkuOTEgMTUuNzRMMyA5TDkuOTEgOC4yNkwxMiAyWiIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4KPC9zdmc+" class="logo" alt="IUGNA Logo">
                         </div>
-                        <p class="text">Escuela de Gendarmería Nacional "Grl Don Martín Miguel de Güemes"</p>
-                        <p class="text">Instituto Universitario de Gendarmería Nacional Argentina (IUGNA)</p>
+                        <p class="institution">Escuela de Gendarmería Nacional "Grl Don Martín Miguel de Güemes"</p>
+                        <p class="institution">Instituto Universitario de Gendarmería Nacional Argentina (IUGNA)</p>
                     </div>
                     <div class="content">
                         <p class="text">Se certifica que</p>
                         <p class="participant-name">${userName}</p>
-                        <p class="text">DNI: ${userId}</p>
+                        <p class="text"><strong>DNI: ${userId}</strong></p>
                         <p class="text">ha participado exitosamente del seminario "El lado oculto de la Seguridad de la Información" y ha aprobado la evaluación correspondiente con una calificación de <strong>${results.percentage}%</strong>.</p>
                         <p class="text">Se extiende el presente certificado en ${completionDateText}.</p>
                     </div>
                     <div class="signatures">
                         <div class="signature-block">
                             <div class="signature-line"></div>
-                            <p class="signature-name">Comandante General (R) D. Juan Carlos Rodríguez</p>
-                            <p class="signature-title">Rector del IUGNA</p>
+                            <p class="signature-name">Cte My Ing. Ricardo Alcides CANAVERI</p>
+                            <p class="signature-title">Disertante Panel 1</p>
                         </div>
                         <div class="signature-block">
                             <div class="signature-line"></div>
-                            <p class="signature-name">Comandante Mayor D. Sergio José Ledesma</p>
-                            <p class="signature-title">Director de la Escuela de Gendarmería Nacional</p>
+                            <p class="signature-name">Cte My (R) Ing. Juan Ariel ENCINA</p>
+                            <p class="signature-title">Disertante Panel 2</p>
+                        </div>
+                        <div class="signature-block">
+                            <div class="signature-line"></div>
+                            <p class="signature-name">Mg. Ignacio MALERVA</p>
+                            <p class="signature-title">Disertante Panel 3</p>
                         </div>
                     </div>
-                    <div class="qr-code-container">
+                    <div class="qr-section">
                         ${qrSvg}
+                        <p class="qr-text">Escanee para verificar autenticidad</p>
+                        <p class="certificate-id">ID: ${certificateId}</p>
                     </div>
                 </div>
             </body>
