@@ -12,7 +12,7 @@ const welcomeSection = document.getElementById("welcomeSection");
 const examSection = document.getElementById("examSection");
 const resultsSection = document.getElementById("resultsSection");
 const reviewSection = document.getElementById("reviewSection");
-const startExamBtn = document.getElementById("iniciarExamen");
+const startExamBtn = document.getElementById("startExam");
 const questionContainer = document.getElementById("questionContainer");
 const progressFill = document.getElementById("progressFill");
 const progressText = document.getElementById("progressText");
@@ -24,7 +24,7 @@ const backToResultsBtn = document.getElementById("backToResults");
 
 // Event listeners
 document.addEventListener("DOMContentLoaded", function() {
-    startExamBtn.addEventListener("click", startExam);
+    startExamBtn.addEventListener("click", iniciarExamen);
     prevBtn.addEventListener("click", previousQuestion);
     nextBtn.addEventListener("click", nextQuestion);
     submitBtn.addEventListener("click", submitExam);
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-function startExam() {
+function iniciarExamen() {
     // Validar información del usuario
     const name = document.getElementById("studentName").value.trim();
     const id = document.getElementById("studentId").value.trim();
