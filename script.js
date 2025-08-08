@@ -418,7 +418,7 @@ function downloadCertificate() {
     const date = new Date();
     const optionsDate = { day: "numeric", month: "long", year: "numeric" };
     const formattedDate = date.toLocaleDateString("es-ES", optionsDate);
-    const completionDateText = `Ciudad de Buenos Aires, ${formattedDate}`;
+    const completionDateText = `Ciudad Evita (Bs As), ${formattedDate}`;
 
     const userName = results.userName || "[Nombre del Participante]";
     const userId = results.userId || "[DNI del Participante]";
@@ -445,8 +445,8 @@ function downloadCertificate() {
     qrCodeContainer.style.margin = "20px auto";
 
     const qrcode = new QRCodeStyling({
-        width: 120,
-        height: 120,
+        width: 110,
+        height: 110,
         type: "svg",
         data: qrData,
         dotsOptions: {
