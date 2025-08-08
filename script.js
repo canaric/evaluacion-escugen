@@ -534,7 +534,7 @@ function downloadCertificate() {
                         text-align: center;
                     }
                     .participant-name { 
-                        font-size: 36px; 
+                        font-size: 25px; 
                         font-weight: bold; 
                         margin: 30px 0; 
                         color: black; 
@@ -612,7 +612,7 @@ function downloadCertificate() {
                         <p class="text">Se certifica que</p>
                         <p class="participant-name">${userName}</p>
                         <p class="text"><strong>DNI: ${userId}</strong></p>
-                        <p class="text">ha participado exitosamente del seminario "El lado oculto de la Seguridad de la Información" y ha aprobado la evaluación correspondiente con una calificación de <strong>${results.percentage}%</strong>.</p>
+                        <p class="text">ha participado exitosamente del Seminario "El Lado Oculto de la Seguridad de la Información" y ha aprobado la evaluación correspondiente con una calificación de <strong>${results.percentage}%</strong>.</p>
                         <p class="text">Se extiende el presente certificado en ${completionDateText}.</p>
                     </div>
                     <div class="signatures">
@@ -628,7 +628,7 @@ function downloadCertificate() {
                         </div>
                         <div class="signature-block">
                             <div class="signature-line"></div>
-                            <p class="signature-name">Mg. Ignacio MALERVA</p>
+                            <p class="signature-name">Mg. Ignacio MALERBA</p>
                             <p class="signature-title">Disertante Panel 3</p>
                         </div>
                     </div>
